@@ -36,42 +36,73 @@ jobs:
   #         echo "Will start the cmake based build" || exit 1
   #         cmake --build . --target check --config Release || exit 1
   #         echo "Completed script successfully" || exit 1
-  # - job: macOS
-  #   pool:
-  #     vmImage: 'xcode9-macos10.13'
-  #   strategy:
-  #     maxParallel: 2
-  #     matrix:
-  #       py36:
-  #         PY_VERSION: 3.6
-  #       # py27:
-  #       #   PY_VERSION: 2.7
-  #   steps:
-  #     # This build is practially identical to the Linux build above.
-  #     - task: CondaEnvironment@1
-  #       inputs:
-  #         updateConda: false
-  #     - script: |
-  #         echo "Will create the conda environment" || exit 1
-  #         conda create --quiet --yes --mkdir --prefix $AGENT_WORKFOLDER/envs/vigra --channel conda-forge python=$(PY_VERSION) || exit 1
-  #         echo "Will activate the conda environment" || exit 1
-  #         source $CONDA/bin/activate $AGENT_WORKFOLDER/envs/vigra || exit 1
-  #         echo "Will start the conda install of prerequisites" || exit 1
-  #         conda install --quiet --yes --mkdir --channel conda-forge jpeg libpng libtiff hdf5 || exit 1
-  #         # disable some packages for now (internal compiler error)
-  #         # conda install --quiet --yes --mkdir --channel conda-forge fftw boost boost-cpp numpy nose || exit 1
-  #         mkdir build || exit 1
-  #         cd build || exit 1
-  #         echo "Will start the cmake configuration" || exit 1
-  #         # cmake .. -DTEST_VIGRANUMPY=1 -DDEPENDENCY_SEARCH_PREFIX="$CONDA_PREFIX" -DCMAKE_PREFIX_PATH="$CONDA_PREFIX" || exit 1
-  #         cmake .. -DTEST_VIGRANUMPY=0 -DDEPENDENCY_SEARCH_PREFIX="$CONDA_PREFIX" -DCMAKE_PREFIX_PATH="$CONDA_PREFIX" || exit 1
-  #         echo "Will start the cmake based build" || exit 1
-  #         cmake --build . --target check --config Release || exit 1
-  #         echo "Completed script successfully" || exit 1
+  - job: macOS
+    pool:
+      vmImage: 'macOS-10.13'
+    strategy:
+      maxParallel: 2
+      matrix:
+        py36:
+          PY_VERSION: 3.6
+        # py27:
+        #   PY_VERSION: 2.7
+    steps:
+      # This build is practially identical to the Linux build above. One ugly part
+      # is the selection of the XCode version. The documentation suggests to either
+      # use an "XCode task" or to manually set the XCode version using "xcode-select".
+      # I could not get the XCode task to run without an XCode project first, so I
+      # chose to use xcode-select. This works well, but requires to manually specify
+      # the exact version below.
+      # /Applications/Xcode.app/Contents/Developer
+      # /Applications/Xcode_10.app/Contents/Developer
+      # /Applications/Xcode_10.1.app/Contents/Developer
+      # /Applications/Xcode_10.1_beta_2.app/Contents/Developer
+      # /Applications/Xcode_10_beta.app/Contents/Developer
+      # /Applications/Xcode_8.app/Contents/Developer
+      # /Applications/Xcode_8.1.app/Contents/Developer
+      # /Applications/Xcode_8.2.1.app/Contents/Developer
+      # /Applications/Xcode_8.2.app/Contents/Developer
+      # /Applications/Xcode_8.3.1.app/Contents/Developer
+      # /Applications/Xcode_8.3.2.app/Contents/Developer
+      # /Applications/Xcode_8.3.3.app/Contents/Developer
+      # /Applications/Xcode_9.app/Contents/Developer
+      # /Applications/Xcode_9.0.1.app/Contents/Developer
+      # /Applications/Xcode_9.1.app/Contents/Developer
+      # /Applications/Xcode_9.2.app/Contents/Developer
+      # /Applications/Xcode_9.3.1.app/Contents/Developer
+      # /Applications/Xcode_9.3.app/Contents/Developer
+      # /Applications/Xcode_9.3_beta.app/Contents/Developer
+      # /Applications/Xcode_9.4-beta.app/Contents/Developer
+      # /Applications/Xcode_9.4.1.app/Contents/Developer
+      # /Applications/Xcode_9.4.app/Contents/Developer
+      # /Applications/Xcode_9.4_beta.app/Contents/Developer
+      # /Applications/Xcode_9.4_beta_2.app/Contents/Developer
+      - task: CondaEnvironment@1
+        inputs:
+          updateConda: false
+      - script: |
+          echo "Listing availbale XCode versions:" || exit 1
+          ls -lad /Applications/Xcode_*.app/Contents/Developer || exit 1
+          echo "Will select the XCode version" || exit 1
+          sudo xcode-select -s /Applications/Xcode_10.1.app/Contents/Developer || exit 1
+          echo "Will create the conda environment" || exit 1
+          conda create --quiet --yes --mkdir --prefix $AGENT_WORKFOLDER/envs/vigra --channel conda-forge python=$(PY_VERSION) || exit 1
+          echo "Will activate the conda environment" || exit 1
+          source $CONDA/bin/activate $AGENT_WORKFOLDER/envs/vigra || exit 1
+          echo "Will start the conda install of prerequisites" || exit 1
+          # disable some packages for now (internal compiler error):
+          conda install --quiet --yes --mkdir --channel conda-forge jpeg libpng libtiff hdf5 || exit 1
+          conda install --quiet --yes --mkdir --channel conda-forge fftw boost boost-cpp numpy nose || exit 1
+          mkdir build || exit 1
+          cd build || exit 1
+          echo "Will start the cmake configuration" || exit 1
+          cmake .. -DTEST_VIGRANUMPY=1 -DDEPENDENCY_SEARCH_PREFIX="$CONDA_PREFIX" -DCMAKE_PREFIX_PATH="$CONDA_PREFIX" || exit 1
+          echo "Will start the cmake based build" || exit 1
+          cmake --build . --target check --config Release || exit 1
+          echo "Completed script successfully" || exit 1
   - job: Windows
     pool:
-  #    vmImage: 'vs2017-win2016'
-      vmImage: 'vs2015-win2016'
+      vmImage: 'vs2017-win2016'
     strategy:
       maxParallel: 2
       matrix:
