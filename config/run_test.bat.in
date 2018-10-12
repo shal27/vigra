@@ -16,6 +16,7 @@ set PATH=@EXTRA_PATH@%PATH%
 set SCRIPT_DIR=%~dp0
 cd "%SCRIPT_DIR%"
 
+echo Will call cmd /c @VIGRA_TEST_EXECUTABLE@
 cmd /c @VIGRA_TEST_EXECUTABLE@
 IF %ERRORLEVEL% NEQ 0 (
     rem this is the Windows version of 'touch'
