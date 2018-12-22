@@ -234,7 +234,7 @@ namespace detail
     void fourierLogAbsSpectrumInPolarCoordinates(SrcIterator s_ul, SrcIterator s_lr, SrcAccessor s_acc,
                                                  DestIterator d_ul, DestIterator d_lr, DestAccessor d_acc)
     {
-        using namespace vigra;
+     //   using namespace vigra;
 
         typename SrcIterator::difference_type shape = s_lr - s_ul;
 
