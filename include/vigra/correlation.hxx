@@ -326,7 +326,7 @@ public:
     template <class SrcIterator,  class SrcAccessor, class DestIterator,  class DestAccessor>
     void operator()(SrcIterator s, SrcAccessor s_acc, DestIterator d, DestAccessor d_acc) const
     {
-        using namespace vigra;
+        //using namespace vigra;
 
         SrcIterator s_ul = s - windowShape()/2,
                     s_lr = s + windowShape()/2+Diff2D(1,1);
@@ -512,7 +512,7 @@ public:
     template <class SrcIterator,  class SrcAccessor, class DestIterator,  class DestAccessor>
     void operator()(SrcIterator s, SrcAccessor s_acc, DestIterator d, DestAccessor d_acc) const
     {
-        using namespace vigra;
+        //using namespace vigra;
 
         SrcIterator s_ul = s - windowShape()/2,
         s_lr = s + windowShape()/2+Diff2D(1,1);
