@@ -1120,14 +1120,14 @@ class OutputArray
 /***********************************
 Rahuls code starts here
 ************************************/
-using namespace vigra;
+//using namespace vigra;
 
 
 //Wrapper classes to STL-Map for use as a sparse array.
 
 //This is used for the ordering of the map. Lexicographical ordering of the index pairs.
 struct ShapeCmp {
-  bool operator()( TinyVector<int,2> s1, TinyVector<int,2>  s2 ) const {
+  bool operator()( vigra::TinyVector<int,2> s1,  vigra::TinyVector<int,2>  s2 ) const {
     if(s1[0] != s2[0]){
         return (s1[0] < s2[0]);
     } else {
@@ -1140,7 +1140,7 @@ template<class T>
 class SparseArray
 {
 
-    std::map<TinyVector<int,2>, T,ShapeCmp> data;
+    std::map< vigra::TinyVector<int,2>, T,ShapeCmp> data;
     int width, length;
 
     public:
@@ -1159,9 +1159,9 @@ class SparseArray
     T& operator()(indexType i_, indexType j_){
         Int32 i = static_cast<Int32>(i_);
         Int32 j = static_cast<Int32>(j_);
-        TinyVector<int,2> newShapew(i, j);
-        typename std::map<TinyVector<int,2>, T, ShapeCmp>::iterator iter;
-        TinyVector<int,2> newShape;
+        vigra::TinyVector<int,2> newShapew(i, j);
+        typename std::map< vigra::TinyVector<int,2>, T, ShapeCmp>::iterator iter;
+         vigra::TinyVector<int,2> newShape;
         return data[newShapew];
     }
 
@@ -1169,7 +1169,7 @@ class SparseArray
     const T get(indexType i_, indexType j_){
         Int32 i = static_cast<Int32>(i_);
         Int32 j = static_cast<Int32>(j_);
-        TinyVector<int,2> newShape(i, j);
+        vigra::TinyVector<int,2> newShape(i, j);
         if(data.find(newShape) == data.end()) return 0;
         else return data.find(newShape)->second;
     }
@@ -1186,8 +1186,8 @@ class SparseArray
             jc[0] = 1;
             return;
         }
-        typename std::map<TinyVector<int,2>, T, ShapeCmp>::iterator iter;
-        TinyVector<int,2> newShape;
+        typename std::map< vigra::TinyVector<int,2>, T, ShapeCmp>::iterator iter;
+         vigra::TinyVector<int,2> newShape;
         int ii = 0;
         int jj = 0;
         int curjc = -1;
